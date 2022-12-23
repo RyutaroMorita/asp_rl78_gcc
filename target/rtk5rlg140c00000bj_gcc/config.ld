@@ -43,8 +43,6 @@ SECTIONS
 	.data : AT(__idata_start)
 	{
 		__data_start = .;
-/*		KEEP(*(.rodata))	*/
-/*		*(.rodata.*)		*/
 		*(.data)
 		*(.data.*)
 	} > RAM

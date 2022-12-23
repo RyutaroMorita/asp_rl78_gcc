@@ -80,7 +80,7 @@ typedef struct task_context_block {
 /*
  *  割込み優先度マスクの外部表現と内部表現の変換
  */
-#define EXT_IPM(isp)	(CAST(PRI, ((isp) >> 1) - 3))		/* 外部表現に変換 */
+#define EXT_IPM(isp)	(CAST(PRI, ((isp) >> 1) - 3))	/* 外部表現に変換 */
 #define INT_IPM(ipm)	(CAST(uint8_t, (3 + ipm)) << 1)	/* 内部表現に変換 */
 
 #ifndef TOPPERS_MACRO_ONLY
@@ -168,15 +168,9 @@ x_lock_cpu(void)
 	 *  ある．
 	 */
 	isp = current_isp();
-//#if TIPM_LOCK == -4
-//	disint();
-//	set_isp(0);
-//#else /* TIPM_LOCK == -4 */
-//	if (IIPM_LOCK > isp) {
 	if (IIPM_LOCK < isp) {
 		set_isp(IIPM_LOCK);
 	}
-//#endif /* TIPM_LOCK == -4 */
 	saved_iipm = isp;
 	lock_flag = true;
 }
@@ -197,12 +191,7 @@ Inline void
 x_unlock_cpu(void)
 {
 	lock_flag = false;
-//#if TIPM_LOCK == -4
-//	enaint();
-//	set_isp(saved_iipm);
-//#else /* TIPM_LOCK == -4 */
     set_isp(saved_iipm);
-//#endif /* TIPM_LOCK == -4 */
 }
 
 #define t_unlock_cpu()	x_unlock_cpu()
@@ -247,15 +236,7 @@ x_set_ipm(PRI intpri)
 	}
 	else {
 		saved_iipm = iipm;
-//#if TIPM_LOCK == -4
-		/*
-		 *  TIPM_LOCKが-4の場合には，この時点でハードウェアの割込み優先
-		 *  度マスクが必ず[1,1]に設定されているため，設定しなおす必要がない．
-		 */
-//#else /* TIPM_LOCK == -4 */
-//		set_isp(iipm > IIPM_LOCK ? iipm : IIPM_LOCK);
 		set_isp(iipm < IIPM_LOCK ? iipm : IIPM_LOCK);
-//#endif /* TIPM_LOCK == -4 */
 	}
 }
 

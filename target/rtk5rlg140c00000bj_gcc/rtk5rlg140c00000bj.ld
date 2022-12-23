@@ -30,13 +30,7 @@ SECTIONS
 		*(.text.*)
 	} > ROM
 	etext = .;
-/*
-	.rodata :
-	{
-		KEEP(*(.rodata))
-		*(.rodata.*)
-	} > ROM
-*/
+
 	. = ALIGN(2);
 
 	__idata_start = .;
